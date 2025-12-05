@@ -19,6 +19,11 @@ const formSchema = z.object({
   setoresImpactados: z.string().min(1, "Selecione um setor"),
   tipoInconformidade: z.string().min(1, "Selecione o tipo de inconformidade"),
   descricao: z.string().min(10, "Descrição deve ter no mínimo 10 caracteres"),
+  coords: z.object({
+    lat: z.number(),
+    lng: z.number(),
+  }),
+  imagem: z.any().nullable(),
 })
 
 export function ReportForm() {
@@ -41,7 +46,8 @@ export function ReportForm() {
   })
 
   function handleLocationChange(coords: google.maps.LatLngLiteral) {
-    form.setValue("coords", coords)
+    form.setValue("coords.lat", coords.lat)
+    form.setValue("coords.lng", coords.lng)
   }
 
   const setorSelecionado = form.watch("setoresImpactados")
@@ -68,7 +74,7 @@ export function ReportForm() {
     try {
       let base64Image = ""
 
-      console.log(values)
+      console.log(JSON.stringify(form.watch("coords")))
 
       if (selectedImage) {
         // Converte para base64
@@ -79,6 +85,9 @@ export function ReportForm() {
           reader.onerror = (error) => reject(error)
         });
       }
+
+      console.log(values);
+
       const res = await fetch("http://localhost:5000/create", {
         method: "POST",
         headers: {
@@ -202,7 +211,7 @@ export function ReportForm() {
             </FormItem>
           )}
         />
-
+        {/*}
         <pre className="text-xs text-red-500">
           {JSON.stringify(form.formState.errors, null, 2)}
         </pre>
