@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -11,27 +11,101 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
+import { MapWithMarker } from "./MapWithMarker"
+import { ImageUploadButton } from "./ImageUploadButton"
+
 const formSchema = z.object({
   setoresImpactados: z.string().min(1, "Selecione um setor"),
   tipoInconformidade: z.string().min(1, "Selecione o tipo de inconformidade"),
   descricao: z.string().min(10, "Descrição deve ter no mínimo 10 caracteres"),
+  coords: z.object({
+    lat: z.number(),
+    lng: z.number(),
+  }),
+  imagem: z.any().nullable(),
 })
 
 export function ReportForm() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [problematicas, setProblematicas] = useState([])
+  const [coords, setCoords] = useState(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       setoresImpactados: "",
       tipoInconformidade: "",
+      coords: null,
       descricao: "",
+      imagem: null,
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("[v0] Form submitted:", values)
-    // Handle form submission
+  function handleLocationChange(coords: google.maps.LatLngLiteral) {
+    form.setValue("coords.lat", coords.lat)
+    form.setValue("coords.lng", coords.lng)
+  }
+
+  const setorSelecionado = form.watch("setoresImpactados")
+
+  useEffect(() => {
+    if (!setorSelecionado) return;
+
+    const fetchProblematicas = async () => {
+      try {
+    
+        const res = await fetch(`http://localhost:5000/getproblematicas?nome=${setorSelecionado}`)
+        const data = await res.json()
+
+        setProblematicas(data)
+      } catch (error) {
+        console.error("Erro ao buscar problemas:", error);
+      }
+    }
+
+    fetchProblematicas()
+  }, [setorSelecionado])
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      let base64Image = ""
+
+      console.log(JSON.stringify(form.watch("coords")))
+
+      if (selectedImage) {
+        // Converte para base64
+        base64Image = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.readAsDataURL(selectedImage)
+          reader.onload = () => resolve(reader.result.split(",")[1]) // tira o prefixo "data:image/png;base64,"
+          reader.onerror = (error) => reject(error)
+        });
+      }
+
+      console.log(values);
+
+      const res = await fetch("http://localhost:5000/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          type: values.tipoInconformidade,
+          description: values.descricao,
+          lng: values.coords.lng,
+          lat: values.coords.lat,
+          image: base64Image
+        })
+      });
+
+      alert("Problema enviado!");
+    } catch (error) {
+      console.error("Erro ao enviar:", error);
+    }
   }
 
   return (
@@ -39,14 +113,11 @@ export function ReportForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
         {/* Map Section */}
         <Card className="flex min-h-32 items-center justify-center border-2 border-dashed">
-          <div className="text-center">
-            <MapPin className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-            <p className="text-sm font-medium">Mapa da Cidade</p>
-            <p className="text-xs text-muted-foreground">Pré-carregado</p>
-            <p className="mt-1 text-xs text-muted-foreground">(possibilidade de selecionar o ponto no mapa)</p>
-          </div>
+          <MapWithMarker onLocationChange={handleLocationChange}/>
         </Card>
-
+        <p className="text-xs text-gray-500">
+          Coordenadas: {JSON.stringify(form.watch("coords"))}
+        </p>
         {/* Setores Impactados - FIRST */}
         <FormField
           control={form.control}
@@ -61,13 +132,11 @@ export function ReportForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="infraestrutura">Infraestrutura</SelectItem>
-                  <SelectItem value="saude">Saúde</SelectItem>
-                  <SelectItem value="educacao">Educação</SelectItem>
-                  <SelectItem value="transporte">Transporte</SelectItem>
-                  <SelectItem value="meio-ambiente">Meio Ambiente</SelectItem>
-                  <SelectItem value="seguranca">Segurança</SelectItem>
-                  <SelectItem value="outros">Outros</SelectItem>
+                  <SelectItem value="espacos_publicos">Espaços Públicos</SelectItem>
+                  <SelectItem value="infraestrutura_urbana">Infraestrutura Urbana</SelectItem>
+                  <SelectItem value="mobilidade">Mobilidade e Transporte</SelectItem>
+                  <SelectItem value="saneamento">Saneamento e Meio Ambiente</SelectItem>
+                  <SelectItem value="segurança">Segurança e cidadania</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -75,33 +144,33 @@ export function ReportForm() {
           )}
         />
 
-        {/* Tipo de Inconformidade - SECOND */}
-        <FormField
-          control={form.control}
-          name="tipoInconformidade"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tipo de Inconformidade</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione o tipo" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="buraco-via">Buraco na via</SelectItem>
-                  <SelectItem value="iluminacao">Iluminação pública</SelectItem>
-                  <SelectItem value="lixo">Acúmulo de lixo</SelectItem>
-                  <SelectItem value="calcada">Calçada danificada</SelectItem>
-                  <SelectItem value="sinalizacao">Sinalização</SelectItem>
-                  <SelectItem value="vazamento">Vazamento</SelectItem>
-                  <SelectItem value="outros">Outros</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {problematicas.length > 0 && (
+          <FormField
+            control={form.control}
+            name="tipoInconformidade"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Problemáticas</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione a problemática" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {problematicas.map((p, i) => (
+                      <SelectItem key={i} value={p}>
+                        {p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
 
         {/* Descrição */}
         <FormField
@@ -118,19 +187,34 @@ export function ReportForm() {
                     size="icon"
                     variant="ghost"
                     className="absolute bottom-2 right-2 h-8 w-8"
-                    onClick={() => {
-                      // Handle image upload
-                      console.log("[v0] Image upload clicked")
-                    }}
+                    onClick={() => fileInputRef.current?.click()}
                   >
                     <ImageIcon className="h-4 w-4" />
                   </Button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        console.log("Arquivo selecionado:", file);
+                        setSelectedImage(file);
+                        form.setValue("imagem", file); // se quiser guardar no form
+                      }
+                    }}
+                  />
                 </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        {/*}
+        <pre className="text-xs text-red-500">
+          {JSON.stringify(form.formState.errors, null, 2)}
+        </pre>
 
         {/* Submit Button */}
         <Button type="submit" size="lg" className="mt-2 h-14 text-base font-bold">
