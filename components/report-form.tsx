@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/card"
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
 import { MapWithMarker } from "./MapWithMarker"
 import { ImageUploadButton } from "./ImageUploadButton"
+import { useAuth } from "../hooks/useAuth"
 
 const formSchema = z.object({
   setoresImpactados: z.string().min(1, "Selecione um setor"),
@@ -32,7 +33,7 @@ export function ReportForm() {
   const [coords, setCoords] = useState(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-
+  const { user } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,8 +87,6 @@ export function ReportForm() {
         });
       }
 
-      console.log(values);
-
       const res = await fetch("http://localhost:5000/create", {
         method: "POST",
         headers: {
@@ -98,7 +97,8 @@ export function ReportForm() {
           description: values.descricao,
           lng: values.coords.lng,
           lat: values.coords.lat,
-          image: base64Image
+          image: base64Image,
+          uid: user.uid
         })
       });
 

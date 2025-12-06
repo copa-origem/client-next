@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { GoogleMap, Marker, useJsApiLoader, InfoWindow } from '@react-google-maps/api';
 import { useAuth } from "../hooks/useAuth";
+import { useSearchParams } from "next/navigation";
+
 
 const containerStyle = {
     width: "100%",
@@ -13,6 +15,13 @@ function MapWithProblems() {
     const [activeMarker, setActiveMarker] = useState(null);
     const { user } = useAuth();
 
+    const params = useSearchParams();
+
+    const latParam = params.get("lat");
+    const lngParam = params.get("lng");
+
+    const lat = latParam ? parseFloat(latParam) : null;
+    const lng = lngParam ? parseFloat(lngParam) : null;
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
@@ -24,8 +33,9 @@ function MapWithProblems() {
                 const res = await fetch("http://localhost:5000/get");
                 const data = await res.json();
                 setProblems(data);
-
-                if (data.length > 0) {
+                if (lat && lng) {
+                    setCenter({ lat: lat, lng: lng });
+                } else if (data.length > 0) {
                     setCenter({ lat: data[0].lat, lng: data[0].lng });
                 }
             } catch (error) {
