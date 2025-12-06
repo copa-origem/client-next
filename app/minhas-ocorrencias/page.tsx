@@ -4,37 +4,38 @@ import { FileText, MapPin, Calendar, Trash2, Edit, MoreVertical } from "lucide-r
 import { Button } from "@/components/ui/button"
 import { BottomNav } from "@/components/bottom-nav"
 import Link from "next/link"
-import { useState } from "react"
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 
-// Mock data - replace with real data from your backend
-const MOCK_REPORTS = [
-  {
-    id: 1,
-    title: "",
-    type: "",
-    location: "",
-    date: "",
-    status: "",
-    image: "",
-  },
-  {
-    id: 2,
-    title: "",
-    type: "",
-    location: "",
-    date: "",
-    status: "",
-    image: "",
-  },
-]
+import { useAuth } from "../../hooks/useAuth"; 
 
 export default function MyReportsPage() {
-  const [reports, setReports] = useState(MOCK_REPORTS)
-  const isLoggedIn = false // Replace with actual auth check
+  const [reports, setReports] = useState([])
+  const { user } = useAuth()
   const hasReports = reports.length > 0
+  const router = useRouter()
 
+  function handleClickDetails(lat, lng) {
+    router.push(`/explorar?lat=${lat}&lng=${lng}`)
+  }
+
+  useEffect(() => {
+    if (!user) return
+
+    const fetchProblems = async () => {
+      try {
+          const res = await fetch(`http://localhost:5000/get?uid=${user.uid}`);
+          const data = await res.json();
+          setReports(data);
+      } catch (error) {
+          console.error("Erro ao buscar problemas:", error);
+      }
+    };
+
+    fetchProblems();
+  }, [user]);
   const handleDelete = (id: number) => {
     setReports(reports.filter((report) => report.id !== id))
   }
@@ -62,7 +63,7 @@ export default function MyReportsPage() {
 
       <main className="flex-1 px-4 py-6 pb-24">
         <div className="container mx-auto max-w-4xl">
-          {!isLoggedIn ? (
+          {!user ? (
             // Not logged in state
             <div className="flex min-h-[400px] flex-col items-center justify-center text-center">
               <FileText className="mb-4 h-16 w-16 text-muted-foreground" />
@@ -112,7 +113,7 @@ export default function MyReportsPage() {
                     <div className="flex flex-col sm:flex-row">
                       <div className="sm:w-1/3">
                         <img
-                          src={report.image || "/placeholder.svg"}
+                          src={report.imageUrl || "/placeholder.svg"}
                           alt={report.title}
                           className="h-48 w-full object-cover sm:h-full"
                         />
@@ -122,7 +123,7 @@ export default function MyReportsPage() {
                           <div className="flex-1">
                             <h3 className="mb-1 text-lg font-semibold">{report.title}</h3>
                             <Badge variant="outline" className={getStatusColor(report.status)}>
-                              {report.status}
+                              {report.description}
                             </Badge>
                           </div>
                           <DropdownMenu>
@@ -151,16 +152,12 @@ export default function MyReportsPage() {
                           </div>
                           <div className="flex items-center gap-2">
                             <MapPin className="h-4 w-4" />
-                            <span>{report.location}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
-                            <span>{new Date(report.date).toLocaleDateString("pt-BR")}</span>
+                            <span>lng {report.lng} | lat{report.lat}</span>
                           </div>
                         </div>
 
                         <div className="mt-4">
-                          <Button variant="outline" size="sm">
+                          <Button onClick={() => handleClickDetails(report.lat, report.lng)} variant="outline" size="sm">
                             Ver Detalhes
                           </Button>
                         </div>
