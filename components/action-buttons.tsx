@@ -19,11 +19,6 @@ export function ActionButtons() {
         </Link>
       </Button>
 
-      <Button variant="outline" size="lg" className="h-14 text-base font-semibold bg-transparent">
-        <MapPin className="mr-2 h-5 w-5" />
-        Ocorrências Próximas
-      </Button>
-
       <Button variant="outline" size="lg" className="h-14 text-base font-semibold bg-transparent" asChild>
         <Link href="/ajuda">
           <HelpCircle className="mr-2 h-5 w-5" />

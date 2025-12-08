@@ -36,8 +36,24 @@ export default function MyReportsPage() {
 
     fetchProblems();
   }, [user]);
-  const handleDelete = (id: number) => {
-    setReports(reports.filter((report) => report.id !== id))
+
+  const handleDelete = async (id: number) => {
+    try {
+      const res = await fetch("http://localhost:5000/deleteproblem", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: id
+        })
+      })
+
+      alert("Problema deletado com sucesso!")
+      setReports(reports.filter((report) => report.id !== id))
+    } catch (error) {
+      console.error("Erro ao deletadar problema:", error)
+    }
   }
 
   const getStatusColor = (status: string) => {
@@ -133,10 +149,6 @@ export default function MyReportsPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Editar
-                              </DropdownMenuItem>
                               <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(report.id)}>
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Excluir

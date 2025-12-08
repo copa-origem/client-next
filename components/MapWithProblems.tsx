@@ -103,8 +103,9 @@ function MapWithProblems() {
                             )}
                             { user ? (
                                 <>
-                                <button onClick={() => vote(p.id, "exists")}>Problema ainda existente</button>
-                                <button onClick={() => vote(p.id, "not_exists")}>Problema não existente {p.votes_not_exists}/3</button>
+                                <button style={{ cursor: "pointer" }} onClick={() => vote(p.id, "exists")}>Problema ainda existente</button>
+                                <br/>
+                                <button style={{ cursor: "pointer" }} onClick={() => vote(p.id, "not_exists")}>Problema não existente {p.votes_not_exists}/3</button>
                                 </>
                             ) : (
                                 <>
