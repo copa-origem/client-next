@@ -101,7 +101,7 @@ Atualmente, o backend utiliza **Express**, focado na agilidade de entrega do MVP
 🔗 **Acesse o repositório da API:** [[Link da api](https://github.com/copa-origem/api-consumo)]
 
 <p align="center">
-Feito com 💜 por <a href="www.linkedin.com/in/rafael-rangel1" target="_blank">Rafael Silva Rangel</a> visando uma cidade melhor.
+Feito com 💜 por <a href="https://www.linkedin.com/in/rafael-rangel1/" target="_blank">Rafael Silva Rangel</a> visando uma cidade melhor.
 </p>
 
 <p align="center">
