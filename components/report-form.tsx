@@ -59,10 +59,19 @@ export function ReportForm() {
     const fetchProblematicas = async () => {
       try {
     
-        const res = await fetch(`https://api-consumo.vercel.app/getproblematicas?nome=${setorSelecionado}`)
+        const res = await fetch(`http://localhost:3000/categories/${setorSelecionado}`)
         const data = await res.json()
 
-        setProblematicas(data)
+        let problems = [];
+
+        data[0].issueTypes.forEach(element => {
+          let littleProblems = [];
+          littleProblems.push(element.id);
+          littleProblems.push(element.title);
+          problems.push(littleProblems);
+        });
+
+        setProblematicas(problems)
       } catch (error) {
         console.error("Erro ao buscar problemas:", error);
       }
@@ -75,30 +84,28 @@ export function ReportForm() {
     try {
       let base64Image = ""
 
-      console.log(JSON.stringify(form.watch("coords")))
-
       if (selectedImage) {
         // Converte para base64
         base64Image = await new Promise((resolve, reject) => {
           const reader = new FileReader()
           reader.readAsDataURL(selectedImage)
-          reader.onload = () => resolve(reader.result.split(",")[1]) // tira o prefixo "data:image/png;base64,"
+          reader.onload = () => resolve(reader.result) // tira o prefixo "data:image/png;base64,"
           reader.onerror = (error) => reject(error)
         });
       }
 
-      const res = await fetch("https://api-consumo.vercel.app/create", {
+      const res = await fetch("http://localhost:3000/problems", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${user.accessToken}`
         },
         body: JSON.stringify({
-          type: values.tipoInconformidade,
           description: values.descricao,
-          lng: values.coords.lng,
-          lat: values.coords.lat,
-          image: base64Image,
-          uid: user.uid
+          latitude: values.coords.lat,
+          longitude: values.coords.lng,
+          issueTypeId: values.tipoInconformidade,
+          imageUrl: base64Image,
         })
       });
 
@@ -132,11 +139,11 @@ export function ReportForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="espacos_publicos">Espaços Públicos</SelectItem>
-                  <SelectItem value="infraestrutura_urbana">Infraestrutura Urbana</SelectItem>
-                  <SelectItem value="mobilidade">Mobilidade e Transporte</SelectItem>
-                  <SelectItem value="saneamento">Saneamento e Meio Ambiente</SelectItem>
-                  <SelectItem value="segurança">Segurança e cidadania</SelectItem>
+                  <SelectItem value="Espaços Públicos">Espaços Públicos</SelectItem>
+                  <SelectItem value="Infraestrutura Urbana">Infraestrutura Urbana</SelectItem>
+                  <SelectItem value="Mobilidade e Transporte">Mobilidade e Transporte</SelectItem>
+                  <SelectItem value="Saneamento e Meio Ambiente">Saneamento e Meio Ambiente</SelectItem>
+                  <SelectItem value="Segurança e Cidadania">Segurança e cidadania</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -159,8 +166,8 @@ export function ReportForm() {
                   </FormControl>
                   <SelectContent>
                     {problematicas.map((p, i) => (
-                      <SelectItem key={i} value={p}>
-                        {p}
+                      <SelectItem key={p[0]} value={p[0]}>
+                        {p[1]}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -199,7 +206,6 @@ export function ReportForm() {
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        console.log("Arquivo selecionado:", file);
                         setSelectedImage(file);
                         form.setValue("imagem", file); // se quiser guardar no form
                       }
