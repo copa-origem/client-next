@@ -34,7 +34,6 @@ function MapWithProblemsContent() {
                 const res = await fetch("http://localhost:3000/problems");
                 const data = await res.json();
                 setProblems(data);
-                console.log(data[0].latitude)
                 if (lat && lng) {
                     setCenter({ lat: lat, lng: lng });
                 } else if (data.length > 0) {

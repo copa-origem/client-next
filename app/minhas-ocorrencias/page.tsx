@@ -26,7 +26,14 @@ export default function MyReportsPage() {
 
     const fetchProblems = async () => {
       try {
-          const res = await fetch(`https://api-consumo.vercel.app/get?uid=${user.uid}`);
+          const res = await fetch(`http://localhost:3000/problems/my-problems`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${user.accessToken}`,
+            },
+          }
+          );
           const data = await res.json();
           setReports(data);
       } catch (error) {
@@ -39,14 +46,12 @@ export default function MyReportsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await fetch("https://api-consumo.vercel.app/deleteproblem", {
+      const res = await fetch(`http://localhost:3000/problems/${id}`, {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${user.accessToken}`,
         },
-        body: JSON.stringify({
-          id: id
-        })
       })
 
       alert("Problema deletado com sucesso!")
@@ -160,16 +165,16 @@ export default function MyReportsPage() {
                         <div className="space-y-2 text-sm text-muted-foreground">
                           <div className="flex items-center gap-2">
                             <FileText className="h-4 w-4" />
-                            <span>{report.type}</span>
+                            <span>{report.issueType.title}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <MapPin className="h-4 w-4" />
-                            <span>lng {report.lng} | lat{report.lat}</span>
+                            <span>lng {report.longitude} | lat{report.latitude}</span>
                           </div>
                         </div>
 
                         <div className="mt-4">
-                          <Button onClick={() => handleClickDetails(report.lat, report.lng)} variant="outline" size="sm">
+                          <Button onClick={() => handleClickDetails(report.latitude, report.longitude)} variant="outline" size="sm">
                             Ver Detalhes
                           </Button>
                         </div>
