@@ -31,7 +31,7 @@ function MapWithProblemsContent() {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const res = await fetch("http://localhost:3000/problems");
+                const res = await fetch("http://localhost:3000/problems/map");
                 const data = await res.json();
                 setProblems(data);
                 if (lat && lng) {
