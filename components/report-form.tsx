@@ -94,7 +94,7 @@ export function ReportForm() {
         });
       }
 
-      const res = await fetch("http://20.63.25.230:3000/problems", {
+      const res = await fetch("/api/problems", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -28,7 +28,7 @@ export default function MyReportsPage() {
 
     const fetchProblems = async () => {
       try {
-          const res = await fetch(`http://20.63.25.230:3000/problems/my-problems`, {
+          const res = await fetch(`/api/problems/my-problems`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -49,7 +49,7 @@ export default function MyReportsPage() {
   const handleDelete = async (id: number) => {
     try {
       console.log(id);
-      const res = await fetch(`http://20.63.25.230:3000/problems/${id}`, {
+      const res = await fetch(`/api/problems/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

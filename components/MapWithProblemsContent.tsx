@@ -31,7 +31,7 @@ function MapWithProblemsContent() {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const res = await fetch("http://20.63.25.230:3000/problems/map");
+                const res = await fetch("/api/problems/map");
                 const data = await res.json();
                 setProblems(data);
                 if (lat && lng) {
@@ -51,7 +51,7 @@ function MapWithProblemsContent() {
         try {
             const token = await user.getIdToken();
 
-            const res = await fetch("http://20.63.25.230:3000/votes", {
+            const res = await fetch("/api/votes", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
