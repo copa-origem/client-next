@@ -59,7 +59,7 @@ export function ReportForm() {
     const fetchProblematicas = async () => {
       try {
     
-        const res = await fetch(`http://localhost:3000/categories/${setorSelecionado}`)
+        const res = await fetch(`http://20.63.25.230:3000/categories/${setorSelecionado}`)
         const data = await res.json()
 
         let problems = [];
@@ -94,7 +94,7 @@ export function ReportForm() {
         });
       }
 
-      const res = await fetch("http://localhost:3000/problems", {
+      const res = await fetch("http://20.63.25.230:3000/problems", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
