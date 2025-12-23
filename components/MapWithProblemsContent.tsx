@@ -31,13 +31,13 @@ function MapWithProblemsContent() {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const res = await fetch("https://api-consumo.vercel.app/get");
+                const res = await fetch("http://20.63.25.230:3000/problems/map");
                 const data = await res.json();
                 setProblems(data);
                 if (lat && lng) {
                     setCenter({ lat: lat, lng: lng });
                 } else if (data.length > 0) {
-                    setCenter({ lat: data[0].lat, lng: data[0].lng });
+                    setCenter({ lat: data[0].latitude, lng: data[0].longitude });
                 }
             } catch (error) {
                 console.error("Erro ao buscar problemas:", error);
@@ -47,26 +47,26 @@ function MapWithProblemsContent() {
         fetchProblems();
     }, []);
 
-    const vote = async (id, status) => {
+    const vote = async (id, type) => {
         try {
             const token = await user.getIdToken();
 
-            const res = await fetch("https://api-consumo.vercel.app/vote", {
+            const res = await fetch("http://20.63.25.230:3000/votes", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ problemId: id, status: status})
+                body: JSON.stringify({ problemId: id, type: type})
             });
 
             const data = await res.json();
-            console.log(data);
-            if (!res.ok) throw new Error(data.error);
+            if (!res.ok) throw new Error(data.message);
             
-            alert(data.message);
+            alert("Voto Registrado com sucesso!");
         } catch (error) {
-            console.error("Erro: " + error.message);
+            alert(error.message)
+            console.error("Erro:", error);
         }
     }
 
@@ -81,19 +81,19 @@ function MapWithProblemsContent() {
             {problems.map((p) => (
                 <Marker 
                     key={p.id}
-                    position={{ lat: p.lat, lng: p.lng }}
-                    title={`${p.type} - ${p.description}`}
+                    position={{ lat: p.latitude, lng: p.longitude }}
+                    title={`${p.issueType.title} - ${p.description}`}
                     onMouseOver={() => setActiveMarker(p.id)}
                     onClick={() => setActiveMarker(p.id)}
                 >
                 {activeMarker === p.id && (
                     <InfoWindow
-                        position={{ lat: p.lat, lng: p.lng }}
+                        position={{ lat: p.latitude, lng: p.longitude }}
                         onCloseClick={() => setActiveMarker(null)}                    
                     >
                         <div>
                             <>
-                            <p><b>{p.type}</b></p>
+                            <p><b>{p.issueType.title}</b></p>
                             <p>{p.description}</p>
                             {p.imageUrl && (
                                 <img 
@@ -104,9 +104,9 @@ function MapWithProblemsContent() {
                             )}
                             { user ? (
                                 <>
-                                <button style={{ cursor: "pointer" }} onClick={() => vote(p.id, "exists")}>Problema ainda existente</button>
+                                <button style={{ cursor: "pointer" }} onClick={() => vote(p.id, "CONFIRMATION")}>Problema ainda existente</button>
                                 <br/>
-                                <button style={{ cursor: "pointer" }} onClick={() => vote(p.id, "not_exists")}>Problema não existente {p.votes_not_exists}/3</button>
+                                <button style={{ cursor: "pointer" }} onClick={() => vote(p.id, "NON_EXISTENT")}>Problema não existente {p.votesNotExistsCount}/3</button>
                                 </>
                             ) : (
                                 <>
