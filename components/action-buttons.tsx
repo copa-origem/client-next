@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { AlertCircle, MapPin, HelpCircle, Info } from "lucide-react"
+import { AlertCircle, FileText, HelpCircle, Info } from "lucide-react"
 
 export function ActionButtons() {
   return (
@@ -16,6 +16,13 @@ export function ActionButtons() {
         <Link href="/nova-denuncia">
           <AlertCircle className="mr-2 h-5 w-5" />
           Registrar Nova Denúncia
+        </Link>
+      </Button>
+
+      <Button variant="outline" size="lg" className="h-14 text-base font-semibold bg-transparent" asChild>
+        <Link href="/gerar-relatorio">
+          <FileText className="mr-2 h-5 w-5" />
+          Gerar Relatório
         </Link>
       </Button>
 
