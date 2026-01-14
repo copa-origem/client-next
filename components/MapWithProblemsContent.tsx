@@ -31,7 +31,7 @@ function MapWithProblemsContent() {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const res = await fetch("/api/problems/map");
+                const res = await fetch("https://api.alertacidadaoapi.com/problems/map");
                 const data = await res.json();
                 setProblems(data);
                 if (lat && lng) {
@@ -51,7 +51,7 @@ function MapWithProblemsContent() {
         try {
             const token = await user.getIdToken();
 
-            const res = await fetch("/api/votes", {
+            const res = await fetch("https://api.alertacidadaoapi.com/votes", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
