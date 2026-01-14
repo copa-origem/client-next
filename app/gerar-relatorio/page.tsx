@@ -70,7 +70,7 @@ export default function GerarRelatorioPage() {
       try {
         // Assume que sua API busca pelo nome, ex: /categories/Infraestrutura Urbana
         // EncodeURIComponent garante que espaços não quebrem a URL
-        const res = await fetch(`/api/categories/${encodeURIComponent(selectedCategoryName)}`)
+        const res = await fetch(`https://api.alertacidadaoapi.com/categories/${encodeURIComponent(selectedCategoryName)}`)
         
         if (!res.ok) throw new Error("Falha ao buscar categoria");
         
@@ -115,7 +115,7 @@ export default function GerarRelatorioPage() {
         Object.entries(filters).filter(([_, v]) => v !== "")
       );
 
-      const response = await fetch('/api/reports/export', {
+      const response = await fetch('https://api.alertacidadaoapi.com/reports/export', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
