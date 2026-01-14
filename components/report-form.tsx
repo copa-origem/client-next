@@ -34,6 +34,7 @@ export function ReportForm() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const { user } = useAuth()
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,7 +60,7 @@ export function ReportForm() {
     const fetchProblematicas = async () => {
       try {
     
-        const res = await fetch(`https://api.alertacidadaoapi.com/categories/${setorSelecionado}`)
+        const res = await fetch(`${API_URL}/categories/${setorSelecionado}`)
         const data = await res.json()
 
         let problems = [];
@@ -94,7 +95,7 @@ export function ReportForm() {
         });
       }
 
-      const res = await fetch("https://api.alertacidadaoapi.com/problems", {
+      const res = await fetch(`${API_URL}/problems`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
