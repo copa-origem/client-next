@@ -59,7 +59,7 @@ export function ReportForm() {
     const fetchProblematicas = async () => {
       try {
     
-        const res = await fetch(`/api/categories/${setorSelecionado}`)
+        const res = await fetch(`https://api.alertacidadaoapi.com/categories/${setorSelecionado}`)
         const data = await res.json()
 
         let problems = [];
@@ -94,7 +94,7 @@ export function ReportForm() {
         });
       }
 
-      const res = await fetch("/api/problems", {
+      const res = await fetch("https://api.alertacidadaoapi.com/problems", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
