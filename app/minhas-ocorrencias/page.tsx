@@ -16,6 +16,7 @@ export default function MyReportsPage() {
   const { user } = useAuth()
   const hasReports = reports.length > 0
   const router = useRouter()
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   function handleClickDetails(lat, lng) {
     router.push(`/explorar?lat=${lat}&lng=${lng}`)
@@ -26,7 +27,7 @@ export default function MyReportsPage() {
 
     const fetchProblems = async () => {
       try {
-          const res = await fetch(`https://api.alertacidadaoapi.com/problems/my-problems`, {
+          const res = await fetch(`${API_URL}/problems/my-problems`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -46,7 +47,7 @@ export default function MyReportsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await fetch(`https://api.alertacidadaoapi.com/problems/${id}`, {
+      const res = await fetch(`${API_URL}/problems/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
