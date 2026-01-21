@@ -45,7 +45,6 @@ function MapWithProblemsContent() {
         if (!socket) return;
 
         socket.on('map-update', (data: any) => {
-            console.log('Update de mapa recebido', data);
             setProblems((prevMarkers) => {
                 const exists = prevMarkers.find(m => m.id == data.id);
                 if (exists) return prevMarkers;
