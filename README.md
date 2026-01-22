@@ -11,8 +11,8 @@
 
 ## 🔗 Live Demo & Resources
 
-🟢 **Live Application:** [https://client-next-beta.vercel.app/](https://client-next-beta.vercel.app/)  
-⚙️ **Backend Repository (NestJS/RabbitMQ):** [GitHub - Backend API](https://github.com/copa-origem/api-consumo-nest) *(Check this for the Event-Driven Architecture)*
+🟢 **Live Application:** [https://alertacidadaoapp.vercel.app/](https://alertacidadaoapp.vercel.app/)  
+⚙️ **Backend Repository (NestJS/RabbitMQ):** [GitHub - Backend API](https://github.com/copa-origem/alerta-cidadao-api) *(Check this for the Event-Driven Architecture)*
 
 ---
 
