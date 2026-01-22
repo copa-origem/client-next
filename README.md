@@ -1,113 +1,126 @@
-# 📢 [Alerta Cidadão]
+# 📢 Alerta Cidadão (Citizen Alert)
 
-![Next.js Badge](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![Next.js Badge](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript Badge](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind Badge](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Status Badge](https://img.shields.io/badge/STATUS-ONLINE-brightgreen?style=for-the-badge)
 
-> Uma plataforma de denúncia cidadã para conectar a comunidade e o poder público, facilitando o reporte de irregularidades urbanas.
+> A Civic Tech platform bridging the gap between communities and local government, enabling real-time reporting of urban issues.
 
 ---
 
-## 🔗 Acesse o Projeto
+## 🔗 Live Demo & Resources
 
-🟢 **Aplicação no ar:** [https://client-next-beta.vercel.app/](https://client-next-beta.vercel.app/)
+🟢 **Live Application:** [https://client-next-beta.vercel.app/](https://client-next-beta.vercel.app/)  
+⚙️ **Backend Repository (NestJS/RabbitMQ):** [GitHub - Backend API](https://github.com/copa-origem/api-consumo-nest) *(Check this for the Event-Driven Architecture)*
 
 ---
 
-## 📱 O Projeto
+## 📱 About the Project
 
-O Alerta Cidadão nasceu da necessidade de simplificar a comunicação entre os moradores e a prefeitura. Muitas vezes, um buraco na rua, falta de iluminação ou acúmulo de lixo demoram a ser resolvidos por falta de um canal ágil de notificação.
+Alerta Cidadão was born from the need to simplify communication between residents and city hall. Issues like potholes, broken streetlights, or waste accumulation often go unresolved due to the lack of an agile notification channel.
 
-Com esta aplicação, o usuário pode:
-1.  **Registrar** uma ocorrência em tempo real.
-2.  **Anexar fotos** da irregularidade.
-3.  **Localizar** o problema no mapa (Geolocalização).
-4.  **Acompanhar** o status da denúncia.
+**Key Capabilities:**
+1.  **Real-Time Reporting:** Users can register incidents instantly.
+2.  **Live Updates:** The map updates automatically via **WebSockets** when new reports are submitted by other users.
+3.  **Async PDF Export:** Request a report generation and receive it via WebSocket notification (processed in the background to ensure UI responsiveness).
+4.  **Geolocation:** Precise pinning of issues on the Google Maps interface.
 
 ## 📸 Screenshots
 
-| Mobile - Home | Mobile - Nova Denúncia | Desktop - Mapa |
+| Mobile - Home | Mobile - New Report | Desktop - Live Map |
 |:---:|:---:|:---:|
 | ![Home](./public/home_mobile.jpeg) | ![Form](./public/form_mobile.jpeg) | ![Map](./public/map.jpg) |
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tech Stack
 
-O front-end foi construído focando em **performance** e **SEO**, utilizando o poder do ecossistema React.
+The frontend was built with a focus on **performance**, **SEO**, and **User Experience**, leveraging the React ecosystem.
 
-- **[Next.js](https://nextjs.org/)** - Framework React para produção (SSR/SSG).
-- **[TypeScript](https://www.typescriptlang.org/)** - Tipagem estática para maior segurança no código.
-- **[Tailwind CSS](https://tailwindcss.com/)** - Estilização utilitária e responsiva.
-- **[Google Maps API]** - Para visualização dos pontos no mapa. 
-- **[React Hook Form](https://react-hook-form.com/)** - Gerenciamento performático de formulários.
-- **[Zod](https://zod.dev/)** - Validação de dados (schema validation).
-- **[Fetch]** - Comunicação com a API.
+- **[Next.js](https://nextjs.org/)** - Production-grade React framework (SSR/SSG).
+- **[TypeScript](https://www.typescriptlang.org/)** - Static typing for code reliability.
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS for responsive design.
+- **[Google Maps API]** - Interactive map integration.
+- **[Socket.io-client]** - Real-time bidirectional communication with the backend.
+- **[React Hook Form](https://react-hook-form.com/)** - Performant form validation.
+- **[Zod](https://zod.dev/)** - Schema validation.
 
-## ⚙️ Funcionalidades Técnicas
+## ⚙️ Engineering Highlights
 
-- [x] **Server-Side Rendering (SSR):** Carregamento rápido das denúncias recentes.
-- [x] **Responsividade:** Layout totalmente adaptável para celulares e tablets.
-- [x] **Integração com API:** Consumo de endpoints RESTful para envio e leitura de dados.
+- [x] **Real-Time Communication:** Implemented WebSocket listeners to update the UI without page refreshes when the backend pushes new data.
+- [x] **Server-Side Rendering (SSR):** Optimized initial load time for better SEO and performance.
+- [x] **Responsive Design:** Mobile-first approach ensuring usability across all devices.
+- [x] **Secure Integration:** Consumes a robust **NestJS API** secured with JWT and guarded routes.
 
-## 🚀 Como rodar localmente
+## 🚀 How to Run Locally
 
-Se você deseja contribuir ou testar o código na sua máquina:
+To contribute or test the code on your machine:
 
-1. Clone o repositório:
+1. Clone the repository:
 ```bash
-git clone https://github.com/copa-origem/client-next.git
+    git clone https://github.com/copa-origem/client-next.git
 ```
 
-2. Instale as dependências:
+2. Install dependencies:
 ```bash
-cd client-next
-npm install
-# ou
-yarn install
+    cd client-next
+    npm install
+    # or
+    yarn install
 ```
 
-3. Configure as variáveis de ambiente:  
-Crie um arquivo .env.local na raiz do projeto e adicione as chaves necessárias, que são as de um console do firebase de um projeto.
+3. Configure Environment Variables:  
+Create a .env.local file in the root directory and add your firebase and API keys:  
 ```bash
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
-NEXT_PUBLIC_API_KEY=
-NEXT_PUBLIC_AUTH_DOMAIN=
-NEXT_PUBLIC_PROJECT_ID=
-NEXT_PUBLIC_STORAGE_BUCKET=
-NEXT_PUBLIC_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_APP_ID=
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_key
+    NEXT_PUBLIC_API_KEY=your_firebase_api_key
+    NEXT_PUBLIC_AUTH_DOMAIN=your_project.firebaseapp.com
+    NEXT_PUBLIC_PROJECT_ID=your_project_id
+    NEXT_PUBLIC_STORAGE_BUCKET=your_bucket.appspot.com
+    NEXT_PUBLIC_MESSAGING_SENDER_ID=your_sender_id
+    NEXT_PUBLIC_APP_ID=your_app_id
+    # If you are running the backend locally:
+    NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
 ```
 
-4. Rode o servidor de desenvolvimento:
+4. Run the development server:
 ```bash
-npm run dev
+    npm run dev
 ```
+Open http://localhost:3000 in your browser.
 
-Abra http://localhost:3000 no seu navegador.
+## 🤝 Contribution
+This is an open-source Civic Tech project. Suggestions and Pull Requests are welcome to help us create better cities.
 
-## 🤝 Contribuição
-Este é um projeto de código aberto com foco em Civic Tech. Sugestões e Pull Requests são muito bem-vindos para ajudarmos a criar cidades melhores
-1. Faça um Fork do projeto
-2. Crie uma Branch para sua Feature (git checkout -b feature/incrivelFeature)
-3. Faça o Commit (git commit -m 'Add some IncrivelFeature')
-4. Faça o Push (git push origin feature/IncrivelFeature)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a Branch (git checkout -b feature/AmazingFeature)
+3. Commit your changes (git commit -m 'feat: Add some AmazingFeature')
+4. Push to the Branch (git push origin feature/AmazingFeature)
+5. Open a Pull Request
 
-## 🏗️ Arquitetura e Backend
+## 💻 Architecture Note
+This frontend consumes a Restful API developed in NestJS.
+The backend implements an Event-Driven Architecture using RabbitMQ for background processing and WebSockets for real-time feedback.  
 
-O Front-end (este repositório) consome uma API RESTful desenvolvida em Node.js.
+Note: The previous express.js MVP backend has been fully deprecated and replaced by the scalable NestJS microservice architecture.  
 
-Atualmente, o backend utiliza **Express**, focado na agilidade de entrega do MVP (Produto Mínimo Viável).
-> 🚧 **Roadmap:** Está planejada a migração da API para **NestJS** visando maior escalabilidade e padronização arquitetural (Design Patterns e Injeção de Dependência).
-
-🔗 **Acesse o repositório da API:** [[Link da api](https://github.com/copa-origem/api-consumo)]
-
-<p align="center">
-Feito com 💜 por <a href="https://www.linkedin.com/in/rafael-rangel1/" target="_blank">Rafael Silva Rangel</a> visando uma cidade melhor.
-</p>
-
-<p align="center">
-Feito com 💜 por Daniel Mendonça das Virgens visando uma cidade melhor.
-</p>
-
-<p align="center">
-Feito com 💜 por Rafhael Andrade visando uma cidade melhor.
-</p>
+<div align="center">
+    <h3>Built with 💜 for better cities by:</h3>
+    <table align="center">
+        <tr>
+            <td align="center">
+                <a href="https://www.linkedin.com/in/rafael-rangel1/">
+                <b>Rafael Silva Rangel</b><br>
+                (Full Stack & DevOps)
+                </a>
+            </td>
+            <td align="center">
+                <b>Daniel Mendonça</b><br>
+                (Developer)
+            </td>
+            <td align="center">
+                <b>Rafhael Andrade</b><br>
+                (Developer)
+            </td>
+        </tr>
+    </table>
+</div>
